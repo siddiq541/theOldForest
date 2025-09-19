@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Old Forest</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen">
+
+  <!-- Container -->
+  <div class="w-full max-w-2xl bg-gray-800 rounded-2xl shadow-lg p-6 space-y-4">
+    <h1 class="text-3xl font-bold text-center text-green-400">🌲 The Old Forest</h1>
+    <!-- Game -->
+    <div id="gameText" class="bg-gray-700 rounded-lg p-4  overflow-y-auto">
+    </div>
+    <!-- Inventory -->
+    <div id="inventory" class="bg-gray-700 rounded-lg p-3">
+    </div>
+
+    <!-- Input -->
+    <div class="flex flex-col space-y-2">
+        <label for="usertext" class="text-sm font-medium text-white">Enter your command:</label>
+        <div class="flex space-x-2">
+            <input type="text" id="usertext" class="flex-1 px-4 py-2 bg-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Type a direction (north, south, east, west) and press Enter"/>
+        </div>
+    </div>
+    <!-- Status -->
+    <div id="status" class="text-center text-sm text-red-400 font-semibold"></div>
+
+  </div>
+
+
+  <!-- js -->
+  <script src="assets/js/game.js"></script>
+
+
+</body>
+</html>
