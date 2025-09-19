@@ -221,29 +221,29 @@ class Game {
     const forest = new Room(
       "Forest Entrance",
       "You stand at the edge of the Old Forest. A path winds deeper into the shadows. Legends say treasures lie within, but few return.",
-      "/assets/img/forest.jpg"
+      "assets/img/forest.jpg"
     );
     const bridge = new Room(
       "Bridge",
       "An ancient mossy bridge stretches over a rushing river. A hulking troll blocks the way.",
-      "/assets/img/monster.jpg"
+      "assets/img/monster.jpg"
     );
-    bridge.clearedImage = "/assets/img/bridge.jpg";
+    bridge.clearedImage = "assets/img/bridge.jpg";
     const river = new Room(
       "River",
       "A glittering river cuts through the forest. The water ripples oddly.",
-      "/assets/img/nymph.jpg"
+      "assets/img/nymph.jpg"
     );
-    river.clearedImage = "/assets/img/water.jpg";
+    river.clearedImage = "assets/img/water.jpg";
     const castle = new Room(
       "Old Castle",
       "You are now in an old castle standing before a dragon sleeping on treasure. A sinister dwarf appears before you.",
-      "/assets/img/castle.jpg"
+      "assets/img/castle.jpg"
     );
     const home = new Room(
       "Home",
       "You are suddenly transported back home safely standing in your backyard.",
-      "/assets/img/home.jpg"
+      "assets/img/home.jpg"
     );
 
     // Links
