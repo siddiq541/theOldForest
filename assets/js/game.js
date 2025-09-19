@@ -507,6 +507,7 @@ class Game {
           );
         }
       }
+      this.refreshCurrentRoom();
     } else if (result.status === "wrong") {
       this.log(result.message);
     } else if (result.status === "dead") {
@@ -516,7 +517,7 @@ class Game {
     } else if (result.status === "already") {
       this.log(result.message);
     }
-    this.refreshCurrentRoom();
+    
   }
 }
 // Start the game
