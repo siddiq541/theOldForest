@@ -1,16 +1,12 @@
-
-
 function normalizeAnswer(s) {
   return String(s || "")
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")      // remove punctuation
-    .replace(/\b(a|an|the)\b/g, "")   // remove common articles
+    .replace(/[^a-z0-9\s]/g, "") // remove punctuation
+    .replace(/\b(a|an|the)\b/g, "") // remove common articles
     .replace(/\s+/g, " ")
     .trim();
 }
-
 //   Classes
-
 class Item {
   constructor(name, description = "") {
     this.name = name;
@@ -22,11 +18,11 @@ class Room {
   constructor(name, description = "", image = "") {
     this.name = name;
     this.description = description;
-    this.image = image;           
-    this.linkedRooms = {};       
-    this.character = null;        
-    this.items = [];              
-    this.image = image; 
+    this.image = image;
+    this.linkedRooms = {};
+    this.character = null;
+    this.items = [];
+    this.image = image;
     this.clearedImage = null;
   }
   get image() {
@@ -36,8 +32,12 @@ class Room {
   set image(value) {
     this._image = value;
   }
-    get displayImage() {
-    if (this.character instanceof RiddleCharacter && this.character.solved && this.clearedImage) {
+  get displayImage() {
+    if (
+      this.character instanceof RiddleCharacter &&
+      this.character.solved &&
+      this.clearedImage
+    ) {
       return this.clearedImage;
     }
     return this._image;
@@ -53,13 +53,15 @@ class Room {
 
   getDetails() {
     const entries = Object.entries(this.linkedRooms);
-    return entries.map(([dir, room]) => `The ${room.name} is to the ${dir}.`).join("\n");
+    return entries
+      .map(([dir, room]) => `The ${room.name} is to the ${dir}.`)
+      .join("\n");
   }
 
   describe() {
     let str = `${this.description}`;
     if (this.items.length) {
-      str += "\n\nYou see: " + this.items.map(i => i.name).join(", ");
+      str += "\n\nYou see: " + this.items.map((i) => i.name).join(", ");
     }
     return str;
   }
@@ -77,8 +79,6 @@ class Character {
 }
 
 class RiddleCharacter extends Character {
-  // answers: array of acceptable answers (strings)
-  // rewardItem: a string name (e.g. "Stone Key") to give player on solve
   constructor(name, description, riddle, answers = [], rewardItem = null) {
     super(name, description);
     this.riddle = riddle;
@@ -94,26 +94,40 @@ class RiddleCharacter extends Character {
   }
 
   tryAnswer(rawInput) {
-    if (this.solved) return { status: "already", message: `You already answered ${this.name}.` };
+    if (this.solved)
+      return {
+        status: "already",
+        message: `You already answered ${this.name}.`,
+      };
 
     const guess = normalizeAnswer(rawInput);
     if (this.answers.includes(guess)) {
       this.solved = true;
-      return { status: "correct", message: `✅ Correct! ${this.name} accepts your answer.` , reward: this.rewardItem};
+      return {
+        status: "correct",
+        message: `✅ Correct! ${this.name} accepts your answer.`,
+        reward: this.rewardItem,
+      };
     }
 
     this.attempts--;
     if (this.attempts <= 0) {
-      return { status: "dead", message: `❌ Wrong! No attempts left. ${this.name} triggers your doom. GAME OVER.` };
+      return {
+        status: "dead",
+        message: `❌ Wrong! No attempts left. ${this.name} triggers your doom. GAME OVER.`,
+      };
     }
 
-    return { status: "wrong", message: `❌ Wrong! You have ${this.attempts} attempts left.` };
+    return {
+      status: "wrong",
+      message: `❌ Wrong! You have ${this.attempts} attempts left.`,
+    };
   }
 }
 
 class Player {
   constructor() {
-    this.inventory = []; // array of Item objects (or names)
+    this.inventory = [];
     this.currentRoom = null;
   }
 
@@ -125,18 +139,17 @@ class Player {
 
   hasItem(name) {
     name = String(name || "").toLowerCase();
-    return this.inventory.some(it => it.name.toLowerCase() === name);
+    return this.inventory.some((it) => it.name.toLowerCase() === name);
   }
 
   inventoryList() {
     if (this.inventory.length === 0) return "(empty)";
-    return this.inventory.map(it => it.name).join(", ");
+    return this.inventory.map((it) => it.name).join(", ");
   }
 }
 
-
 //   Game (setup + UI)
-   
+
 class Game {
   constructor() {
     // DOM refs
@@ -189,43 +202,49 @@ class Game {
       }
     });
   }
-    refreshCurrentRoom() {
-  // Just re-render the current room without resetting anything else
-        this.enterRoom(this.player.currentRoom);
-    }   
+  refreshCurrentRoom() {
+    this.enterRoom(this.player.currentRoom);
+  }
   // ----------------
   // Restart function
   restartGame() {
-    // Reset player
     this.player = new Player();
-
-    // Reset game over flag
     this.gameOverFlag = false;
-
-    // Clear logs
     this.clearLog();
-
-    // Re-initialize world (rooms, characters, etc.)
-    
     this.initWorld();
-
-    // Update inventory UI
     this.updateInventoryUI();
-
-    // Reset status
-    
   }
 
   // ----------------
   initWorld() {
     // Rooms
-    const forest = new Room("Forest Entrance", "You stand at the edge of the Old Forest. A path winds deeper into the shadows. Legends say treasures lie within, but few return.", "/assets/img/forest.jpg");
-    const bridge = new Room("Bridge", "An ancient mossy bridge stretches over a rushing river. A hulking troll blocks the way.", "/assets/img/monster.jpg");
+    const forest = new Room(
+      "Forest Entrance",
+      "You stand at the edge of the Old Forest. A path winds deeper into the shadows. Legends say treasures lie within, but few return.",
+      "/assets/img/forest.jpg"
+    );
+    const bridge = new Room(
+      "Bridge",
+      "An ancient mossy bridge stretches over a rushing river. A hulking troll blocks the way.",
+      "/assets/img/monster.jpg"
+    );
     bridge.clearedImage = "/assets/img/bridge.jpg";
-    const river = new Room("River", "A glittering river cuts through the forest. The water ripples oddly.", "/assets/img/nymph.jpg");
+    const river = new Room(
+      "River",
+      "A glittering river cuts through the forest. The water ripples oddly.",
+      "/assets/img/nymph.jpg"
+    );
     river.clearedImage = "/assets/img/water.jpg";
-    const castle = new Room("Old Castle", "You are now in an old castle standing before a dragon sleeping on treasure. A sinister dwarf appears before you.", "/assets/img/castle.jpg");
-    const home = new Room("Home", "You are suddenly transported back home safely standing in your backyard.", "/assets/img/home.jpg");
+    const castle = new Room(
+      "Old Castle",
+      "You are now in an old castle standing before a dragon sleeping on treasure. A sinister dwarf appears before you.",
+      "/assets/img/castle.jpg"
+    );
+    const home = new Room(
+      "Home",
+      "You are suddenly transported back home safely standing in your backyard.",
+      "/assets/img/home.jpg"
+    );
 
     // Links
     forest.linkRoom("east", bridge);
@@ -243,7 +262,6 @@ class Game {
       ["shadow", "a shadow"],
       "Stone Key"
     );
-    
 
     const nymph = new RiddleCharacter(
       "Water Nymph",
@@ -252,7 +270,6 @@ class Game {
       ["river", "a river"],
       "Water Key"
     );
-    
 
     const dwarf = new RiddleCharacter(
       "Sinister Dwarf",
@@ -289,81 +306,78 @@ class Game {
     // Show initial room
     this.enterRoom(this.player.currentRoom);
   }
-  
-  // ----------------
-enterRoom(room) {
-  if (!room) {
-    this.log(`<em>There is nothing that way.</em>`);
-    return;
-  }
 
-  // Clear previous text and set current room
-  this.clearLog();
-  this.player.currentRoom = room;
-
-  // Room name
-  const title = document.createElement("p");
-  title.className = "text-center font-bold text-lg mb-2 text-green-300";
-  title.innerHTML = `📍 ${room.name}`;
-  this.gameText.appendChild(title);
-
-  // Room image with fade-in
-  if (room.displayImage) {
-    const imgContainer = document.createElement("div");
-    imgContainer.className = "mx-auto mb-2 transition-opacity duration-700 opacity-0";
-
-    const img = document.createElement("img");
-    img.src = room.displayImage;
-    img.alt = room.name;
-    img.className = "rounded-lg shadow-lg max-w-70 max-h-[60vh] mx-auto object-contain";
-
-    imgContainer.appendChild(img);
-    this.gameText.appendChild(imgContainer);
-
-    requestAnimationFrame(() => {
-      imgContainer.classList.remove("opacity-0");
-      imgContainer.classList.add("opacity-100");
-    });
-  }
-
-  // Room description
-  if (room.describe()) {
-    const desc = document.createElement("p");
-    desc.className = "text-center text-gray-200 mb-2";
-    desc.innerText = room.describe();
-    this.gameText.appendChild(desc);
-  }
-
-  // Character / Riddle
-  if (room.character) {
-    if (room.character instanceof RiddleCharacter) {
-      const riddleDiv = document.createElement("div");
-      riddleDiv.className = "text-center italic text-yellow-300 p-2 border-t border-b border-yellow-500 my-2";
-      riddleDiv.innerText = room.character.interactText();
-      this.gameText.appendChild(riddleDiv);
-    } else {
-      const charDesc = document.createElement("p");
-      charDesc.className = "text-center mb-2";
-      charDesc.innerText = room.character.describe();
-      this.gameText.appendChild(charDesc);
+  enterRoom(room) {
+    if (!room) {
+      this.log(`<em>There is nothing that way.</em>`);
+      return;
     }
+
+    this.clearLog();
+    this.player.currentRoom = room;
+
+    // Room name
+    const title = document.createElement("p");
+    title.className = "text-center font-bold text-lg mb-2 text-green-300";
+    title.innerHTML = `📍 ${room.name}`;
+    this.gameText.appendChild(title);
+
+    // Room image with fade-in
+    if (room.displayImage) {
+      const imgContainer = document.createElement("div");
+      imgContainer.className =
+        "mx-auto mb-2 transition-opacity duration-700 opacity-0";
+
+      const img = document.createElement("img");
+      img.src = room.displayImage;
+      img.alt = room.name;
+      img.className =
+        "rounded-lg shadow-lg max-w-70 max-h-[60vh] mx-auto object-contain";
+
+      imgContainer.appendChild(img);
+      this.gameText.appendChild(imgContainer);
+
+      requestAnimationFrame(() => {
+        imgContainer.classList.remove("opacity-0");
+        imgContainer.classList.add("opacity-100");
+      });
+    }
+
+    // Room description
+    if (room.describe()) {
+      const desc = document.createElement("p");
+      desc.className = "text-center text-gray-200 mb-2";
+      desc.innerText = room.describe();
+      this.gameText.appendChild(desc);
+    }
+
+    // Character / Riddle
+    if (room.character) {
+      if (room.character instanceof RiddleCharacter) {
+        const riddleDiv = document.createElement("div");
+        riddleDiv.className =
+          "text-center italic text-yellow-300 p-2 border-t border-b border-yellow-500 my-2";
+        riddleDiv.innerText = room.character.interactText();
+        this.gameText.appendChild(riddleDiv);
+      } else {
+        const charDesc = document.createElement("p");
+        charDesc.className = "text-center mb-2";
+        charDesc.innerText = room.character.describe();
+        this.gameText.appendChild(charDesc);
+      }
+    }
+
+    // Linked room details
+    const details = room.getDetails();
+    if (details) {
+      const detailP = document.createElement("p");
+      detailP.className = "text-center text-sm text-green-300 mt-2";
+      detailP.innerHTML = details.replace(/\n/g, "<br>");
+      this.gameText.appendChild(detailP);
+    }
+    this.updateInventoryUI();
   }
 
-  // Linked rooms / details
-  const details = room.getDetails();
-  if (details) {
-    const detailP = document.createElement("p");
-    detailP.className = "text-center text-sm text-green-300 mt-2";
-    detailP.innerHTML = details.replace(/\n/g, "<br>");
-    this.gameText.appendChild(detailP);
-  }
-
-  // Update inventory
-  this.updateInventoryUI();
-}
-
-
-  // ----------------
   handleCommand(raw) {
     const cmd = raw.trim();
     const lower = cmd.toLowerCase();
@@ -382,7 +396,9 @@ enterRoom(room) {
 
     // Help
     if (lower === "help") {
-      this.log(`<strong>Commands:</strong> north / south / east / west  |  go <dir>  |  answer <text>  |  look  |  inventory  |  restart`);
+      this.log(
+        `<strong>Commands:</strong> north / south / east / west  |  go <dir>  |  answer <text>  |  look  |  inventory  |  restart`
+      );
       return;
     }
 
@@ -416,17 +432,21 @@ enterRoom(room) {
     }
 
     // Single word answer if riddle present
-    if (["north","south","east","west"].includes(lower)) {
+    if (["north", "south", "east", "west"].includes(lower)) {
       this.attemptMove(lower);
       return;
     }
-    const maybeRiddle = this.player.currentRoom.character instanceof RiddleCharacter && !this.player.currentRoom.character.solved;
+    const maybeRiddle =
+      this.player.currentRoom.character instanceof RiddleCharacter &&
+      !this.player.currentRoom.character.solved;
     if (maybeRiddle) {
       this.attemptAnswer(cmd);
       return;
     }
 
-    this.log(`<em>Unknown command: "${cmd}". Type 'help' for a list of valid commands.</em>`);
+    this.log(
+      `<em>Unknown command: "${cmd}". Type 'help' for a list of valid commands.</em>`
+    );
   }
 
   attemptMove(direction) {
@@ -434,6 +454,16 @@ enterRoom(room) {
     if (!next) {
       this.log(`❌ You can't go ${direction} from here.`);
       return;
+    }
+    if (next.name === "Old Castle") {
+      const hasStone = this.player.hasItem("Stone Key");
+      const hasWater = this.player.hasItem("Water Key");
+      if (!hasStone || !hasWater) {
+        this.log(
+          "⚠️ The castle gates are magically sealed. You need both the Stone Key and Water Key to enter."
+        );
+        return; // stop move
+      }
     }
     this.enterRoom(next);
   }
@@ -460,20 +490,23 @@ enterRoom(room) {
         }
       }
 
-      // Check victory if dwarf
+      // Check victory
       if (character.name.toLowerCase().includes("dwarf")) {
         const hasStone = this.player.hasItem("Stone Key");
         const hasWater = this.player.hasItem("Water Key");
         if (hasStone && hasWater) {
-          this.log("✨ As you answer, the castle trembles and the treasure room opens. You are transported home with the treasure!");
+          this.log(
+            "✨ As you answer, the castle trembles and the treasure room opens. You are transported home with the treasure!"
+          );
           this.enterRoom(this.rooms.home);
           this.setStatus("🎉 YOU WIN! Type 'restart' to play again.");
           this.gameOverFlag = true;
         } else {
-          this.log("The dwarf nods, but nothing happens — you need both the Stone Key and the Water Key to claim the treasure. Find them first.");
+          this.log(
+            "The dwarf nods, but nothing happens — you need both the Stone Key and the Water Key to claim the treasure. Find them first."
+          );
         }
       }
-            
     } else if (result.status === "wrong") {
       this.log(result.message);
     } else if (result.status === "dead") {
@@ -486,10 +519,7 @@ enterRoom(room) {
     this.refreshCurrentRoom();
   }
 }
-
 // Start the game
 window.addEventListener("DOMContentLoaded", () => {
   window.theOldForest = new Game();
 });
-
-
